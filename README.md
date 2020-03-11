@@ -12,6 +12,8 @@ Download the jQAssistant command line tool for your system: [jQAssistant - Get S
 
 Next download the latest version from the release tab. Put the `jqa-csharp-plugin-*.jar` into the plugins folder of the jQAssistant commandline tool.
 
+You also need to download the latest version of [JDOM](https://repo1.maven.org/maven2/org/jdom/jdom2/2.0.6/jdom2-2.0.6.jar) and put it into the plugins folder.
+
 You'll first need to convert .cs-files into .xml-files. To do that, copy the folder `roslyn` at `src/main` into the jQAssistant commandline tool.
 
 You can now convert .cs-files into .xml-files.
