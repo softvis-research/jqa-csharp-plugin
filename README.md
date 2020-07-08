@@ -33,3 +33,7 @@ You can then start a local Neo4j server to start querying the database at [http:
 ```bash
 jqassistant.sh server
 ```
+
+## Contribute
+
+We really appreciate your help! If you want to contribute please have a look at the [CONTRIBUTING.md](CONTRIBUTING.md).
