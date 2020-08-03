@@ -1,56 +1,67 @@
 package org.jqassistant.contrib.plugin.csharp.model;
 
+import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-import java.lang.reflect.Type;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
+
 import java.util.List;
 
-@Label("Method")
-public interface MethodDescriptor extends CSharpDescriptor {
-  String getName();
-  void setName(String name);
 
-  boolean getNewMod();
-  void setNewMod(boolean newMod);
+@Label(value = "Method")
+public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
 
-  String getVisibility();
-  void setVisibility(String visibility);
 
-  boolean getStaticMod();
-  void setStaticMod(boolean staticMod);
+    @Relation("HAS")
+    List<ParameterDescriptor> getParameters();
 
-  boolean getVirtual();
-  void setVirtual(boolean virtual);
+    @Relation("RETURNS")
+    TypeDescriptor getReturns();
 
-  boolean getOverride();
-  void setOverride(boolean override);
+    void setReturns(TypeDescriptor returns);
 
-  boolean getSealed();
-  void setSealed(boolean sealed);
+    @Relation("THROWS")
+    List<TypeDescriptor> getDeclaredThrowables();
 
-  boolean getAbstractMod();
-  void setAbstractMod(boolean abstractMod);
+    @Outgoing
+    List<InvokesDescriptor> getInvokes();
 
-  boolean getExtern();
-  void setExtern(boolean extern);
+    @Incoming
+    List<InvokesDescriptor> getInvokedBy();
 
-  @Relation("INVOKES")
-  List<MethodDescriptor> getMethod();
+    int getCyclomaticComplexity();
 
-  void setMethod(List<MethodDescriptor> method);
+    void setCyclomaticComplexity(int cyclomaticComplexity);
 
-  @Relation("DECLARES")
-  List<VariableDescriptor> getVariable();
+    @Declares
+    List<FieldDescriptor> getFields();
 
-  void setVariable(List<VariableDescriptor> variable);
+    Integer getFirstLineNumber();
 
-  @Relation("HAS")
-  List<ParameterDescriptor> getParameter();
+    void setFirstLineNumber(Integer firstLineNumber);
 
-  void setParameter(List<ParameterDescriptor> parameter);
+    Integer getLastLineNumber();
 
-  @Relation("RETURNS")
-  TypeDescriptor getReturns();
+    void setLastLineNumber(Integer lastLineNumber);
 
-  void setReturns(TypeDescriptor typeDescriptor);
+    int getEffectiveLineCount();
+
+    void setEffectiveLineCount(int effectiveLineCount);
+
+    Boolean isNew();
+
+    void setNew(boolean n);
+
+    Boolean isExtern();
+
+    void setExtern(boolean e);
+
+    Boolean isOverride();
+
+    void setOverride(boolean o);
+
+    Boolean isVirtual();
+
+    void setVirtual(boolean v);
 }

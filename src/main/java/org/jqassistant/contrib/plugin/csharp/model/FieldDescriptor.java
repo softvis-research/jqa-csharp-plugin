@@ -1,39 +1,25 @@
 package org.jqassistant.contrib.plugin.csharp.model;
 
-import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
+import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-@Label("Field")
-public interface FieldDescriptor
-  extends CSharpDescriptor, TypedDescriptor, NamedDescriptor {
-  String getName();
-  void setName(String name);
 
-  boolean getNewMod();
-  void setNewMod(boolean newMod);
+@Label(value = "Field")
+public interface FieldDescriptor extends MemberDescriptor, TypedDescriptor, AccessModifierDescriptor {
 
-  String getVisibility();
-  void setVisibility(String visibility);
+    @Property("transient")
+    Boolean isTransient();
 
-  boolean getStaticMod();
-  void setStaticMod(boolean staticMod);
+    void setTransient(Boolean transientField);
 
-  boolean getReadOnly();
-  void setReadOnly(boolean readOnly);
+    @Property("volatile")
+    Boolean isVolatile();
 
-  boolean getOverride();
-  void setOverride(boolean override);
+    void setVolatile(Boolean volatileField);
 
-  boolean getVolatileMod();
-  void setVolatileMod(boolean volatileMod);
+    @Relation("HAS")
+    PrimitiveValueDescriptor getValue();
 
-  boolean getConstantMember();
-  void setConstantMember(boolean constantMember);
-
-  @Relation.Outgoing
-  @Relation("HAS")
-  ValueDescriptor getValue();
-
-  void setValue(ValueDescriptor value);
+    void setValue(PrimitiveValueDescriptor valueDescriptor);
 }
