@@ -3,4 +3,9 @@
 target/
 .editorconfig
 .DS_Store
-run
+run/
+dependency-reduced-pom.xml
+jqassistant/store
+jqassistant/certificates
+jqassistant/logs
+jqassistant/store_lock

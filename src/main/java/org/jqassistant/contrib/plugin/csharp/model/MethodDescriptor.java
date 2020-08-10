@@ -51,17 +51,17 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
 
     Boolean isNew();
 
-    void setNew(boolean n);
+    void setNew(Boolean n);
 
     Boolean isExtern();
 
-    void setExtern(boolean e);
+    void setExtern(Boolean e);
 
     Boolean isOverride();
 
-    void setOverride(boolean o);
+    void setOverride(Boolean o);
 
     Boolean isVirtual();
 
-    void setVirtual(boolean v);
+    void setVirtual(Boolean v);
 }

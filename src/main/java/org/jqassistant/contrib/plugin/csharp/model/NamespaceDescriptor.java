@@ -10,6 +10,10 @@ import java.util.List;
 @Label("Namespace")
 public interface NamespaceDescriptor extends CSharpDescriptor, NamedDescriptor, FullQualifiedNameDescriptor {
 
+    String getAlias();
+
+    void setAlias(String alias);
+
     @Relation("CONTAINS")
     List<TypeDescriptor> getContains();
 }

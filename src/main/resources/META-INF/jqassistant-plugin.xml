@@ -1,12 +1,19 @@
 <jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.8"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.8 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.8.xsd"
-                    name="CSharp">
-    <description>Provides a scanner for CSharp Source code.</description>
+                    name="C#">
+    <description>Provides a scanner for C# source code.</description>
     <model>
         <class>org.jqassistant.contrib.plugin.csharp.model.CSharpDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.CSharpClassesDirectoryDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.CSharpFileDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.CSharpClassDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.NamespaceDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.MethodDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.ConstructorDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.InvokesDescriptor</class>
     </model>
     <scanner>
-        <class>org.jqassistant.contrib.plugin.csharp.scanner.CSharpScannerPlugin</class>
+        <class>org.jqassistant.contrib.plugin.csharp.scanner.CSharpDirectoryScannerPlugin</class>
     </scanner>
 </jqassistant-plugin>
