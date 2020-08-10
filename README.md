@@ -12,20 +12,10 @@ Download the jQAssistant command line tool for your system: [jQAssistant - Get S
 
 Next download the latest version from the release tab. Put the `jqa-csharp-plugin-*.jar` into the plugins folder of the jQAssistant commandline tool.
 
-You also need to download the latest version of [JDOM](https://repo1.maven.org/maven2/org/jdom/jdom2/2.0.6/jdom2-2.0.6.jar) and put it into the plugins folder.
-
-You'll first need to convert .cs-files into .xml-files. To do that, copy the folder `roslyn` at `src/main` into the jQAssistant commandline tool.
-
-You can now convert .cs-files into .xml-files.
+Now scan your C# project:
 
 ```bash
-dotnet roslyn/CSharpSyntaxToXML.dll <CS-file>
-```
-
-Now scan the newly created `syntax_structure.xml` and wait for the plugin to finish:
-
-```bash
-jqassistant.sh scan -f <XML-file>
+jqassistant.sh scan -f <C#-project-folder>
 ```
 
 You can then start a local Neo4j server to start querying the database at [http://localhost:7474](http://localhost:7474):
@@ -33,6 +23,10 @@ You can then start a local Neo4j server to start querying the database at [http:
 ```bash
 jqassistant.sh server
 ```
+
+## Model
+
+![Neo4j model for the jQAssistant C# plugin](./drawio/jqa-csharp-graphschema.jpg)
 
 ## Contribute
 
