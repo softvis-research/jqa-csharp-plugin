@@ -5,6 +5,9 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ConstructorModel extends MethodModel implements JsonModel {
+public class InvokesModel {
 
+    private int lineNumber;
+
+    private String methodId;
 }

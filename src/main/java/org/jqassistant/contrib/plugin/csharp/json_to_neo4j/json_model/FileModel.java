@@ -11,9 +11,17 @@ import java.util.List;
 @NoArgsConstructor
 public class FileModel {
 
+    private String name;
+
     private String absolutePath;
+
+    private String relativePath;
 
     private List<ClassModel> classes;
 
     private List<UsingModel> usings;
+
+    private List<EnumModel> enums;
+
+    private List<InterfaceModel> interfaces;
 }

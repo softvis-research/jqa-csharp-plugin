@@ -11,7 +11,7 @@
 
     <groupId>org.jqassistant.contrib.plugin</groupId>
     <artifactId>jqa-csharp-plugin</artifactId>
-    <version>0.0.5</version>
+    <version>0.1.0</version>
 
     <name>jQAssistant CSharp Plugin</name>
     <description>The jQAssistant plugin to scan and to analyze a CSharp instance.</description>
@@ -53,6 +53,14 @@
 
     <!-- tag::dependencies[] -->
     <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>

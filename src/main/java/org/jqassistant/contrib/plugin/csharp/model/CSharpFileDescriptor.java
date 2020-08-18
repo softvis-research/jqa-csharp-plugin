@@ -10,4 +10,7 @@ public interface CSharpFileDescriptor extends CSharpDescriptor, FileDescriptor, 
 
     @Relation("USES")
     List<NamespaceDescriptor> getUses();
+
+    @Relation("CONTAINS")
+    List<TypeDescriptor> getTypes();
 }

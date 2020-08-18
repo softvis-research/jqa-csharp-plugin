@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static org.apache.commons.lang.SystemUtils.*;
 import static org.jqassistant.contrib.plugin.csharp.csharp_to_json.CSharpToJsonToolManager.NAME;
 
 public class CSharpToJsonToolExecutor {
@@ -35,7 +36,7 @@ public class CSharpToJsonToolExecutor {
             Files.createDirectories(jsonOutputPath);
 
             String[] command = new String[5];
-            command[0] = toolPath + File.separator + "csharp-to-json-converter.exe";
+            command[0] = toolPath + File.separator + getCommandForCurrentPlatform();
             command[1] = "-i";
             command[2] = sourceDirectory.getAbsolutePath();
             command[3] = "-o";
@@ -57,5 +58,18 @@ public class CSharpToJsonToolExecutor {
         } catch (IOException | InterruptedException e) {
             throw new CSharpPluginException(String.format("Failed to run %s.", NAME), e);
         }
+    }
+
+    private String getCommandForCurrentPlatform() {
+
+        if (IS_OS_WINDOWS) {
+            return "csharp-to-json-converter.exe";
+        }
+
+        if (IS_OS_MAC || IS_OS_LINUX) {
+            return "csharp-to-json-converter";
+        }
+
+        throw new RuntimeException("No C#2J tool version executable for OS: " + OS_NAME);
     }
 }

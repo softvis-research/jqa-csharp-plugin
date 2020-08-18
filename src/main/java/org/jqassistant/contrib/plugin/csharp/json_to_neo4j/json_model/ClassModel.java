@@ -13,6 +13,7 @@ import java.util.List;
 public class ClassModel implements JsonModel {
 
     private String name;
+
     private String fqn;
 
     @JsonProperty("abstract")
@@ -20,9 +21,17 @@ public class ClassModel implements JsonModel {
 
     private boolean sealed;
 
+    private String accessibility;
+
+    private String baseType;
+
+    private List<String> implementedInterfaces;
+
     private List<MethodModel> methods;
 
     private List<ConstructorModel> constructors;
+
+    private List<FieldModel> fields;
 
     public String getKey() {
         return fqn;

@@ -5,5 +5,5 @@ import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.report.Generic;
 
 
-public interface CSharpClassesDirectoryDescriptor extends CSharpDescriptor, ArtifactFileDescriptor, DirectoryDescriptor {
+public interface CSharpClassesDirectoryDescriptor extends CSharpDescriptor, DirectoryDescriptor {
 }

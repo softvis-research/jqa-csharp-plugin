@@ -3,15 +3,16 @@ package org.jqassistant.contrib.plugin.csharp.json_to_neo4j;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches.ClassCache;
-import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches.NamespaceCache;
+import org.apache.commons.lang.StringUtils;
+import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches.*;
 import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.json_model.*;
 import org.jqassistant.contrib.plugin.csharp.model.*;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonToNeo4JConverter {
 
@@ -21,68 +22,294 @@ public class JsonToNeo4JConverter {
     private final File inputDirectory;
 
     private final NamespaceCache namespaceCache;
-    private final ClassCache classCache;
+    private final TypeCache typeCache;
+    private final CSharpFileCache cSharpFileCache;
+    private final MethodCache methodCache;
+    private final EnumValueCache enumValueCache;
+    private final FieldCache fieldCache;
 
-    public JsonToNeo4JConverter(Store store, File inputDirectory, NamespaceCache namespaceCache, ClassCache classCache) {
+    private List<FileModel> fileModelList;
+
+    public JsonToNeo4JConverter(Store store, File inputDirectory, NamespaceCache namespaceCache, TypeCache typeCache, CSharpFileCache cSharpFileCache, MethodCache methodCache, EnumValueCache enumValueCache, FieldCache fieldCache) {
 
         this.store = store;
         this.inputDirectory = inputDirectory;
         this.namespaceCache = namespaceCache;
-        this.classCache = classCache;
+        this.typeCache = typeCache;
+        this.cSharpFileCache = cSharpFileCache;
+        this.methodCache = methodCache;
+        this.enumValueCache = enumValueCache;
+        this.fieldCache = fieldCache;
     }
 
     public void readAllJsonFilesAndSaveToNeo4J() {
 
-        File[] jsonFiles = inputDirectory.listFiles();
+        fileModelList = new ArrayList<>();
 
-        if (jsonFiles == null) {
+        readAllJsonFilesRecursivelyAndCreateDirectoryDescriptors(inputDirectory, null);
+
+        createUsings();
+        createTypes();
+        createEnumMembers();
+        createConstructors();
+        createMethods();
+        createInvokations();
+        createFields();
+    }
+
+    private void readAllJsonFilesRecursivelyAndCreateDirectoryDescriptors(File currentDirectory, CSharpClassesDirectoryDescriptor parentDirectoryDescriptor) {
+
+        File[] filesAndDirectories = currentDirectory.listFiles();
+
+        if (filesAndDirectories == null) {
             return;
         }
 
-        for (File jsonFile : jsonFiles) {
-            process(jsonFile);
+        for (File file : filesAndDirectories) {
+
+            if (file.isDirectory()) {
+                CSharpClassesDirectoryDescriptor cSharpClassesDirectoryDescriptor = store.create(CSharpClassesDirectoryDescriptor.class);
+                cSharpClassesDirectoryDescriptor.setFileName(file.getName());
+
+                if (parentDirectoryDescriptor != null) {
+                    parentDirectoryDescriptor.getContains().add(cSharpClassesDirectoryDescriptor);
+                }
+
+                readAllJsonFilesRecursivelyAndCreateDirectoryDescriptors(file, cSharpClassesDirectoryDescriptor);
+            } else {
+
+                FileModel fileModel = parseAndCache(file);
+                fileModelList.add(fileModel);
+
+                CSharpFileDescriptor cSharpFileDescriptor = cSharpFileCache.create(fileModel.getAbsolutePath());
+
+                if (parentDirectoryDescriptor != null) {
+                    parentDirectoryDescriptor.getContains().add(cSharpFileDescriptor);
+                }
+            }
         }
     }
 
-    private void process(File jsonFile) {
+    private FileModel parseAndCache(File jsonFile) {
 
         LOGGER.info("Processing JSON file: '{}'.", jsonFile);
 
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
-            FileModel fileModel = mapper.readValue(jsonFile, FileModel.class);
-            process(fileModel);
+            return mapper.readValue(jsonFile, FileModel.class);
         } catch (IOException e) {
             LOGGER.error("Failed to parse JSON.", e);
         }
+
+        return null;
     }
 
-    private void process(FileModel fileModel) {
+    private void createUsings() {
 
-        CSharpFileDescriptor cSharpFileDescriptor = store.create(CSharpFileDescriptor.class);
+        for (FileModel fileModel : fileModelList) {
+            CSharpFileDescriptor cSharpFileDescriptor = cSharpFileCache.get(fileModel.getAbsolutePath());
 
-        for (UsingModel usingModel : fileModel.getUsings()) {
-            NamespaceDescriptor namespaceDescriptor = namespaceCache.findOrCreate(usingModel);
-            cSharpFileDescriptor.getUses().add(namespaceDescriptor);
+            for (UsingModel usingModel : fileModel.getUsings()) {
+                NamespaceDescriptor namespaceDescriptor = namespaceCache.findOrCreate(usingModel);
+                cSharpFileDescriptor.getUses().add(namespaceDescriptor);
+            }
         }
+    }
 
-        for (ClassModel classModel : fileModel.getClasses()) {
+    private void createTypes() {
 
-            CSharpClassDescriptor cSharpClassDescriptor = classCache.findOrCreate(classModel);
+        //TODO: Create namespaces for each type if necessary.
 
-            for(ConstructorModel constructorModel: classModel.getConstructors()) {
-                ConstructorDescriptor constructorDescriptor = store.create(ConstructorDescriptor.class);
-                constructorDescriptor.setName( constructorModel.getName());
-                constructorDescriptor.setVisibility(constructorModel.getAccessibility());
-                cSharpClassDescriptor.getDeclaredMembers().add(constructorDescriptor);
+        for (FileModel fileModel : fileModelList) {
+
+            CSharpFileDescriptor cSharpFileDescriptor = cSharpFileCache.get(fileModel.getAbsolutePath());
+
+            for (ClassModel classModel : fileModel.getClasses()) {
+                CSharpClassDescriptor cSharpClassDescriptor = typeCache.create(classModel);
+                cSharpFileDescriptor.getTypes().add(cSharpClassDescriptor);
             }
 
-            for(MethodModel methodModel: classModel.getMethods()) {
-                MethodDescriptor methodDescriptor = store.create(MethodDescriptor.class);
-                methodDescriptor.setName( methodModel.getName());
+            for (EnumModel enumModel : fileModel.getEnums()) {
+                EnumTypeDescriptor enumTypeDescriptor = typeCache.create(enumModel);
+                cSharpFileDescriptor.getTypes().add(enumTypeDescriptor);
+            }
+
+            for (InterfaceModel interfaceModel : fileModel.getInterfaces()) {
+                InterfaceTypeDescriptor interfaceTypeDescriptor = typeCache.create(interfaceModel);
+                cSharpFileDescriptor.getTypes().add(interfaceTypeDescriptor);
+            }
+        }
+    }
+
+    private void createConstructors() {
+
+        for (FileModel fileModel : fileModelList) {
+            for (ClassModel classModel : fileModel.getClasses()) {
+
+                CSharpClassDescriptor cSharpClassDescriptor = typeCache.find(classModel);
+
+                for (ConstructorModel constructorModel : classModel.getConstructors()) {
+                    ConstructorDescriptor constructorDescriptor = store.create(ConstructorDescriptor.class);
+                    constructorDescriptor.setName(constructorModel.getName());
+                    constructorDescriptor.setVisibility(constructorModel.getAccessibility());
+                    constructorDescriptor.setFirstLineNumber(constructorModel.getFirstLineNumber());
+                    constructorDescriptor.setLastLineNumber(constructorModel.getLastLineNumber());
+                    constructorDescriptor.setEffectiveLineCount(constructorModel.getEffectiveLineCount());
+
+                    cSharpClassDescriptor.getDeclaredMembers().add(constructorDescriptor);
+                }
+            }
+        }
+    }
+
+    private void createEnumMembers() {
+
+        for (FileModel fileModel : fileModelList) {
+            for (EnumModel enumModel : fileModel.getEnums()) {
+
+                EnumTypeDescriptor enumTypeDescriptor = (EnumTypeDescriptor) typeCache.get(enumModel.getKey());
+
+                for (EnumMemberModel enumMemberModel : enumModel.getMembers()) {
+
+                    EnumValueDescriptor enumValueDescriptor = enumValueCache.create(enumMemberModel.getKey());
+                    enumValueDescriptor.setType(enumTypeDescriptor);
+                }
+            }
+        }
+    }
+
+    private void createFields() {
+
+        for (FileModel fileModel : fileModelList) {
+            for (ClassModel classModel : fileModel.getClasses()) {
+
+                CSharpClassDescriptor cSharpClassDescriptor = (CSharpClassDescriptor) typeCache.get(classModel.getKey());
+
+                for (FieldModel fieldModel : classModel.getFields()) {
+
+                    FieldDescriptor fieldDescriptor = fieldCache.create(fieldModel.getKey());
+                    fieldDescriptor.setFqn(fieldModel.getFqn());
+                    fieldDescriptor.setName(fieldModel.getName());
+                    fieldDescriptor.setVisibility(fieldModel.getAccessibility());
+
+                    TypeDescriptor typeDescriptor = typeCache.findOrCreate(fieldModel.getType());
+                    fieldDescriptor.setType(typeDescriptor);
+
+                    fieldDescriptor.setVolatile(fieldModel.isVolatileKeyword());
+                    fieldDescriptor.setSealed(fieldModel.isSealed());
+                    fieldDescriptor.setStatic(fieldModel.isStaticKeyword());
+
+                    if (StringUtils.isNotBlank(fieldModel.getConstantValue())) {
+                        PrimitiveValueDescriptor primitiveValueDescriptor = store.create(PrimitiveValueDescriptor.class);
+                        primitiveValueDescriptor.setValue(fieldModel.getConstantValue());
+                        fieldDescriptor.setValue(primitiveValueDescriptor);
+                    }
+
+                    cSharpClassDescriptor.getDeclaredMembers().add(fieldDescriptor);
+                }
+            }
+        }
+    }
+
+
+    private void createMethods() {
+
+        for (FileModel fileModel : fileModelList) {
+            createMethodsForClasses(fileModel);
+            createMethodsForInterfaces(fileModel);
+        }
+    }
+
+    private void createMethodsForClasses(FileModel fileModel) {
+        for (ClassModel classModel : fileModel.getClasses()) {
+
+            CSharpClassDescriptor cSharpClassDescriptor = (CSharpClassDescriptor) typeCache.get(classModel.getKey());
+
+            for (MethodModel methodModel : classModel.getMethods()) {
+
+                MethodDescriptor methodDescriptor = methodCache.create(methodModel.getKey());
+                methodDescriptor.setEffectiveLineCount(methodModel.getEffectiveLineCount());
+                methodDescriptor.setLastLineNumber(methodModel.getLastLineNumber());
+                methodDescriptor.setFirstLineNumber(methodModel.getFirstLineNumber());
+                methodDescriptor.setName(methodModel.getName());
+                methodDescriptor.setFqn(methodModel.getFqn());
                 methodDescriptor.setVisibility(methodModel.getAccessibility());
+
+                TypeDescriptor returnTypeDescriptor = typeCache.findOrCreate(methodModel.getReturnType());
+                methodDescriptor.setReturns(returnTypeDescriptor);
+
+                int index = 1;
+                for (ParameterModel parameterModel : methodModel.getParameters()) {
+
+                    ParameterDescriptor parameterDescriptor = store.create(ParameterDescriptor.class);
+                    parameterDescriptor.setIndex(index);
+                    TypeDescriptor parameterTypeDescriptor = typeCache.findOrCreate(parameterModel.getType());
+                    parameterDescriptor.setType(parameterTypeDescriptor);
+                    parameterDescriptor.setName(parameterModel.getName());
+
+                    methodDescriptor.getParameters().add(parameterDescriptor);
+                    index++;
+                }
+
                 cSharpClassDescriptor.getDeclaredMembers().add(methodDescriptor);
+            }
+        }
+    }
+
+
+    private void createMethodsForInterfaces(FileModel fileModel) {
+
+        for (InterfaceModel interfaceModel : fileModel.getInterfaces()) {
+
+            InterfaceTypeDescriptor interfaceTypeDescriptor = (InterfaceTypeDescriptor) typeCache.get(interfaceModel.getKey());
+
+            for (MethodModel methodModel : interfaceModel.getMethods()) {
+
+                MethodDescriptor methodDescriptor = methodCache.create(methodModel.getKey());
+                methodDescriptor.setEffectiveLineCount(methodModel.getEffectiveLineCount());
+                methodDescriptor.setLastLineNumber(methodModel.getLastLineNumber());
+                methodDescriptor.setFirstLineNumber(methodModel.getFirstLineNumber());
+                methodDescriptor.setName(methodModel.getName());
+                methodDescriptor.setFqn(methodModel.getFqn());
+                methodDescriptor.setVisibility(methodModel.getAccessibility());
+
+                TypeDescriptor returnTypeDescriptor = typeCache.findOrCreate(methodModel.getReturnType());
+                methodDescriptor.setReturns(returnTypeDescriptor);
+
+                int index = 1;
+                for (ParameterModel parameterModel : methodModel.getParameters()) {
+
+                    ParameterDescriptor parameterDescriptor = store.create(ParameterDescriptor.class);
+                    parameterDescriptor.setIndex(index);
+                    TypeDescriptor parameterTypeDescriptor = typeCache.findOrCreate(parameterModel.getType());
+                    parameterDescriptor.setType(parameterTypeDescriptor);
+                    parameterDescriptor.setName(parameterModel.getName());
+
+                    methodDescriptor.getParameters().add(parameterDescriptor);
+                    index++;
+                }
+
+                interfaceTypeDescriptor.getDeclaredMethods().add(methodDescriptor);
+            }
+        }
+    }
+
+    private void createInvokations() {
+
+        for (FileModel fileModel : fileModelList) {
+            for (ClassModel classModel : fileModel.getClasses()) {
+                for (MethodModel methodModel : classModel.getMethods()) {
+
+                    MethodDescriptor methodDescriptor = methodCache.find(methodModel.getKey());
+
+                    for (InvokesModel invokesModel : methodModel.getInvocations()) {
+
+                        MethodDescriptor invokedMethodDescriptor = methodCache.findOrCreate(invokesModel.getMethodId());
+                        InvokesDescriptor invokesDescriptor = store.create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor);
+                        invokesDescriptor.setLineNumber(invokesModel.getLineNumber());
+                    }
+                }
             }
         }
     }

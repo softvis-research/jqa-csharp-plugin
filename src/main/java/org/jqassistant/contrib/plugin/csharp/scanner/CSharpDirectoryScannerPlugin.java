@@ -10,8 +10,7 @@ import org.jqassistant.contrib.plugin.csharp.csharp_to_json.CSharpToJsonToolExec
 import org.jqassistant.contrib.plugin.csharp.csharp_to_json.CSharpToJsonToolFolders;
 import org.jqassistant.contrib.plugin.csharp.csharp_to_json.CSharpToJsonToolManager;
 import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.JsonToNeo4JConverter;
-import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches.ClassCache;
-import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches.NamespaceCache;
+import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches.*;
 import org.jqassistant.contrib.plugin.csharp.model.CSharpClassesDirectoryDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,11 @@ public class CSharpDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin
     private final CSharpToJsonToolExecutor cSharpToJsonToolExecutor;
 
     private NamespaceCache namespaceCache;
-    private ClassCache classCache;
+    private TypeCache classCache;
+    private CSharpFileCache cSharpFileCache;
+    private MethodCache methodCache;
+    private EnumValueCache enumValueCache;
+    private FieldCache fieldCache;
 
     private File jsonDirectory;
 
@@ -62,14 +65,38 @@ public class CSharpDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin
         }
 
         if (classCache == null) {
-            classCache = new ClassCache(scannerContext.getStore());
+            classCache = new TypeCache(scannerContext.getStore());
+        }
+
+        if (cSharpFileCache == null) {
+            cSharpFileCache = new CSharpFileCache(scannerContext.getStore());
+        }
+
+        if (methodCache == null) {
+            methodCache = new MethodCache(scannerContext.getStore());
+        }
+
+        if (enumValueCache == null) {
+            enumValueCache = new EnumValueCache(scannerContext.getStore());
+        }
+
+        if (fieldCache == null) {
+            fieldCache = new FieldCache(scannerContext.getStore());
         }
 
         try {
             cSharpToJsonToolManager.checkIfParserIsAvailableOrDownloadOtherwise();
             jsonDirectory = cSharpToJsonToolExecutor.execute(container);
 
-            JsonToNeo4JConverter jsonToNeo4JConverter = new JsonToNeo4JConverter(scannerContext.getStore(), jsonDirectory, namespaceCache, classCache);
+            JsonToNeo4JConverter jsonToNeo4JConverter = new JsonToNeo4JConverter(
+                    scannerContext.getStore(),
+                    jsonDirectory,
+                    namespaceCache,
+                    classCache,
+                    cSharpFileCache,
+                    methodCache,
+                    enumValueCache,
+                    fieldCache);
             jsonToNeo4JConverter.readAllJsonFilesAndSaveToNeo4J();
 
         } catch (CSharpPluginException e) {

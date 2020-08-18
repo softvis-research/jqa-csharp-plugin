@@ -12,6 +12,13 @@
         <class>org.jqassistant.contrib.plugin.csharp.model.MethodDescriptor</class>
         <class>org.jqassistant.contrib.plugin.csharp.model.ConstructorDescriptor</class>
         <class>org.jqassistant.contrib.plugin.csharp.model.InvokesDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.EnumTypeDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.EnumDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.EnumValueDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.InterfaceTypeDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.ParameterDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.FieldDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.PrimitiveValueDescriptor</class>
     </model>
     <scanner>
         <class>org.jqassistant.contrib.plugin.csharp.scanner.CSharpDirectoryScannerPlugin</class>

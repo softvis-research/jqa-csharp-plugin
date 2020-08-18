@@ -6,41 +6,47 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Setter
 @Getter
 public class MethodModel implements JsonModel {
 
-    private String name;
+    protected String name;
+
+    protected String fqn;
 
     @JsonProperty("static")
-    private boolean staticKeyword;
+    protected boolean staticKeyword;
 
     @JsonProperty("abstract")
-    private boolean abstractKeyword;
+    protected boolean abstractKeyword;
 
-    private boolean sealed;
+    protected boolean sealed;
 
-    private boolean async;
+    protected boolean async;
 
-    private boolean override;
+    protected boolean override;
 
-    private boolean virtual;
+    protected boolean virtual;
 
-    private String accessibility;
+    protected String accessibility;
 
-    @JsonIgnore
-    private String key;
+    protected String returnType;
 
-    public MethodModel() {
+    protected int firstLineNumber;
 
-        // FIXME: This can't be referenced.
-        key = UUID.randomUUID().toString();
-    }
+    protected int lastLineNumber;
+
+    protected int effectiveLineCount;
+
+    protected List<InvokesModel> invocations;
+
+    protected List<ParameterModel> parameters;
 
     @Override
     public String getKey() {
-        return key;
+        return fqn;
     }
 }

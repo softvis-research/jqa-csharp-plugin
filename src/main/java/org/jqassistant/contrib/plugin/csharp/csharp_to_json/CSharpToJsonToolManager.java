@@ -15,11 +15,17 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.apache.commons.lang.SystemUtils.*;
+
 public class CSharpToJsonToolManager {
 
     public static final String NAME = "C# to JSON converter";
 
-    private static final String WINDOWS_DOWNLOAD_URL = "https://github.com/softvis-research/csharp-to-json-converter/releases/download/v0.0.1-alpha/windows-csharp-to-json-converter.zip";
+    private static final String CSHARP_TO_JSON_TOOL_VERSION = "v0.0.4-alpha";
+    private static final String GITHUB_DOWNLOAD_URL = "https://github.com/softvis-research/csharp-to-json-converter/releases/download/%s/%s-x64-csharp-to-json-converter.zip";
+    private static final String WINDOWS = "win";
+    private static final String OSX = "osx";
+    private static final String LINUX = "linux";
     private static final Logger LOGGER = LoggerFactory.getLogger(CSharpToJsonToolManager.class);
 
     private final CSharpToJsonToolFolders cSharpToJsonToolFolders;
@@ -59,10 +65,10 @@ public class CSharpToJsonToolManager {
 
     private void downloadParserFromGitHub(File directory) throws IOException {
 
-        // TODO: Check OS
+        String downloadLink = buildDownloadLinkForCurrentPlatform();
 
-        LOGGER.info("Downloading ZIP from GitHub at '{}' ...", WINDOWS_DOWNLOAD_URL);
-        File zip = downloadZip(directory, WINDOWS_DOWNLOAD_URL);
+        LOGGER.info("Downloading ZIP from GitHub at '{}' ...", downloadLink);
+        File zip = downloadZip(directory, downloadLink);
         LOGGER.info("Extracting ZIP '{}' ...", zip.getAbsolutePath());
         extractZip(zip);
 
@@ -91,5 +97,22 @@ public class CSharpToJsonToolManager {
         fileOutputStream.close();
         return zip;
 
+    }
+
+    private String buildDownloadLinkForCurrentPlatform() {
+
+        String operatingSystem;
+
+        if (IS_OS_WINDOWS) {
+            operatingSystem = WINDOWS;
+        } else if (IS_OS_MAC_OSX) {
+            operatingSystem = OSX;
+        } else if (IS_OS_LINUX) {
+            operatingSystem = LINUX;
+        } else {
+            throw new RuntimeException("No C#2J tool version available for OS: " + OS_NAME);
+        }
+
+        return String.format(GITHUB_DOWNLOAD_URL, CSHARP_TO_JSON_TOOL_VERSION, operatingSystem);
     }
 }
