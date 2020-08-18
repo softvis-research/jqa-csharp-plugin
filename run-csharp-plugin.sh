@@ -16,7 +16,7 @@ cp target/jqa-csharp-plugin-*.jar run/jqassistant-commandline-neo4jv3-1.8.0/plug
 
 
 # Scan the test project
-run/jqassistant-commandline-neo4jv3-1.8.0/bin/jqassistant.sh scan -f ../via-magica/Assets/_scripts
+run/jqassistant-commandline-neo4jv3-1.8.0/bin/jqassistant.sh scan -f src/test/resources/scanner/test-csharp-project/CSharpJqAssistantTestProject
 
 # Start a Neo4J server
 run/jqassistant-commandline-neo4jv3-1.8.0/bin/jqassistant.sh server
