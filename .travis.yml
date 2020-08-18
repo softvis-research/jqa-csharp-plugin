@@ -8,7 +8,8 @@ addons:
 language: minimal
 
 script:
-  - mvn clean package
+  - mvn -v
+  - mvn --no-transfer-progress clean package
   - rm target/jqa-csharp-plugin-*-javadoc.jar
   - rm target/jqa-csharp-plugin-*-sources.jar
 
