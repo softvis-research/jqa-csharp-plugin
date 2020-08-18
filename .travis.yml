@@ -1,0 +1,23 @@
+dist: xenial
+addons:
+  apt:
+    packages:
+      - maven
+
+
+language: minimal
+
+script:
+  - mvn clean package
+  - rm target/jqa-csharp-plugin-*-javadoc.jar
+  - rm target/jqa-csharp-plugin-*-sources.jar
+
+deploy:
+  draft: true
+  provider: releases
+  api_key:
+    secure: iuVTiJWYUW2ZoE2pxKxXsRcenpKtIs0ewoC4+w7KIbfCeRv4U4kCOQPT9p45R5l78IVFqOUsj189R4hkTmbAXBhjsBxmIcc8qBPIk4Kzm23hY4fbIPHCDrDYeXa2XBvS5v5ka4wcN9XFD5+7hbLPqJ+mj0RrXTqyjn+juQfCib/LMqaOBRvhSFlOxif/jYKGljK3aoc5A2B5r05hh4rd4SrJHtbBTM/tjn38+DRjVGhe2mELduZCpMg+H5CEtFGrBhq+3HBMTy4kLYonsh4r7fSmmg3pe0+FWMdPCG2SxsBu2g7yE/KI3TMeLjEEWknFVXhqqub5cOfdejk110rITCfTCTx2keWSAiJdfBu0zg21cSv18QZYDDSInJflPrmcWOwGAtd7vomFGCMvV7FF21dJVOO0oROSc7bvhqL3IY0Scv5dSh8xJQcTfiLQA7f+YOjrVbAsut5fd75L4w/ALkt9zbJXxq4OYzC3zdvHzueyAQhXalB/zkV1QKMC9nctwjXPL+eDgaAmt4LFBcUbEyQAQYtg6KlsmtMzEzmnM5epjKV9G2ceR+y2JLBmCW8OkJ3nQOJHrNmqn/wvt5xGTDZiosBXPj5uhWsDeC96/JEv6X7U/mkU9mkKCnX87Ves9IXtV+l4jh8KWETXEJUf7HKJAY7jtjpYQSAOyLFMyzk=
+  file: target/jqa-csharp-plugin-*.jar
+  on:
+    repo: softvis-research/jqa-csharp-plugin
+  skip_cleanup: true
