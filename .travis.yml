@@ -1,16 +1,14 @@
 dist: xenial
-addons:
-  apt:
-    update: true
-    packages:
-      - maven
-
 
 language: minimal
 
 script:
-  - mvn -v
-  - mvn --no-transfer-progress clean package
+  - java -version
+  - export VER="3.6.3"
+  - wget http://www-eu.apache.org/dist/maven/maven-3/${VER}/binaries/apache-maven-${VER}-bin.tar.gz
+  - tar xvf apache-maven-${VER}-bin.tar.gz
+  - apache-maven-${VER}/bin/mvn -v
+  - apache-maven-${VER}/bin/mvn --no-transfer-progress clean package
   - rm target/jqa-csharp-plugin-*-javadoc.jar
   - rm target/jqa-csharp-plugin-*-sources.jar
 
