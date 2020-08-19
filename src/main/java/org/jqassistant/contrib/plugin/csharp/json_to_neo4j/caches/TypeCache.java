@@ -54,6 +54,7 @@ public class TypeCache {
         descriptor.setFullQualifiedName(classModel.getFqn());
         descriptor.setAbstract(classModel.isAbstractKeyword());
         descriptor.setSealed(classModel.isSealed());
+        descriptor.setMd5(classModel.getMd5());
     }
 
     public EnumTypeDescriptor create(EnumModel enumModel) {
@@ -68,6 +69,7 @@ public class TypeCache {
     protected void fillDescriptor(EnumTypeDescriptor descriptor, EnumModel enumModel) {
         descriptor.setName(enumModel.getName());
         descriptor.setFullQualifiedName(enumModel.getFqn());
+        descriptor.setMd5(enumModel.getMd5());
     }
 
     public InterfaceTypeDescriptor create(InterfaceModel interfaceModel) {
@@ -83,6 +85,7 @@ public class TypeCache {
         descriptor.setName(interfaceModel.getName());
         descriptor.setFullQualifiedName(interfaceModel.getFqn());
         descriptor.setVisibility(interfaceModel.getAccessibility());
+        descriptor.setMd5(interfaceModel.getMd5());
     }
 
     public TypeDescriptor get(String key) {

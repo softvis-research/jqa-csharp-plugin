@@ -1,13 +1,10 @@
 package org.jqassistant.contrib.plugin.csharp.json_to_neo4j.json_model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -40,6 +37,8 @@ public class MethodModel implements JsonModel {
     protected int lastLineNumber;
 
     protected int effectiveLineCount;
+
+    protected int cyclomaticComplexity;
 
     protected List<InvokesModel> invocations;
 

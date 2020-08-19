@@ -254,6 +254,7 @@ public class JsonToNeo4JConverter {
                 methodDescriptor.setName(methodModel.getName());
                 methodDescriptor.setFullQualifiedName(methodModel.getFqn());
                 methodDescriptor.setVisibility(methodModel.getAccessibility());
+                methodDescriptor.setCyclomaticComplexity(methodModel.getCyclomaticComplexity());
 
                 TypeDescriptor returnTypeDescriptor = typeCache.findOrCreate(methodModel.getReturnType());
                 methodDescriptor.setReturns(returnTypeDescriptor);

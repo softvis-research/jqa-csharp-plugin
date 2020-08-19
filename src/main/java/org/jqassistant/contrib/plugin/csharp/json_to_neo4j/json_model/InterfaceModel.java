@@ -15,6 +15,8 @@ public class InterfaceModel implements JsonModel {
 
     private String accessibility;
 
+    private String md5;
+
     private List<MethodModel> methods;
 
     @Override

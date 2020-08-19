@@ -14,6 +14,8 @@ public class EnumModel implements JsonModel {
 
     private String fqn;
 
+    private String md5;
+
     private List<EnumMemberModel> members;
 
     @Override

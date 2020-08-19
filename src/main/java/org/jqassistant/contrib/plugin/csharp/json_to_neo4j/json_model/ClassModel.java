@@ -25,6 +25,8 @@ public class ClassModel implements JsonModel {
 
     private String baseType;
 
+    private String md5;
+
     private List<String> implementedInterfaces;
 
     private List<MethodModel> methods;
