@@ -8,8 +8,7 @@ import java.util.List;
 
 public interface CSharpFileDescriptor extends CSharpDescriptor, FileDescriptor, NamedDescriptor {
 
-    @Relation("USES")
-    List<NamespaceDescriptor> getUses();
+    List<UsesNamespaceDescriptor> getUses();
 
     @Relation("CONTAINS")
     List<TypeDescriptor> getTypes();

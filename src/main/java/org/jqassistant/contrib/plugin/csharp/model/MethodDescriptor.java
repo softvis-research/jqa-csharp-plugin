@@ -48,20 +48,4 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
     int getEffectiveLineCount();
 
     void setEffectiveLineCount(int effectiveLineCount);
-
-    Boolean isNew();
-
-    void setNew(Boolean n);
-
-    Boolean isExtern();
-
-    void setExtern(Boolean e);
-
-    Boolean isOverride();
-
-    void setOverride(Boolean o);
-
-    Boolean isVirtual();
-
-    void setVirtual(Boolean v);
 }

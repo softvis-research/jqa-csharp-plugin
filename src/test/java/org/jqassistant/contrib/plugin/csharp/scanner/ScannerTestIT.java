@@ -3,6 +3,8 @@ package org.jqassistant.contrib.plugin.csharp.scanner;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import org.jqassistant.contrib.plugin.csharp.model.CSharpClassDescriptor;
+import org.jqassistant.contrib.plugin.csharp.model.NamespaceDescriptor;
+import org.jqassistant.contrib.plugin.csharp.model.UsesNamespaceDescriptor;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,6 +22,8 @@ public class ScannerTestIT extends AbstractPluginIT {
         store.beginTransaction();
 
         scan();
+        testNamespaces();
+        testUsings();
         testClasses();
 
         store.commitTransaction();
@@ -32,6 +36,23 @@ public class ScannerTestIT extends AbstractPluginIT {
                 RELATIVE_PATH_TO_TEST_PROJECT,
                 DefaultScope.NONE
         );
+    }
+
+    private void testNamespaces() {
+
+        List<NamespaceDescriptor> namespaceDescriptorList = query("MATCH (n:Namespace {fqn: \"Json\"}) RETURN n").getColumn("n");
+
+        assertThat(namespaceDescriptorList).hasSize(1);
+        assertThat(namespaceDescriptorList.get(0).getContains().get(0).getFullQualifiedName()).isEqualTo("Json.JsonUtility");
+    }
+
+    private void testUsings() {
+
+        List<NamespaceDescriptor> namespaceDescriptorList = query("MATCH (:File {name: \"FileWithUsings.cs\"})-[:USES]->(n:Namespace) RETURN n").getColumn("n");
+        assertThat(namespaceDescriptorList).hasSize(3);
+
+        List<UsesNamespaceDescriptor> usesNamespaceDescriptorList = query("MATCH (:File {name: \"FileWithUsings.cs\"})-[u:USES {alias: 'MyAlias'}]->() RETURN u").getColumn("u");
+        assertThat(usesNamespaceDescriptorList).hasSize(1);
     }
 
     private void testClasses() {

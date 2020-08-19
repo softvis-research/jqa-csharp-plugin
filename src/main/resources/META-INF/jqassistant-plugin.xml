@@ -19,6 +19,7 @@
         <class>org.jqassistant.contrib.plugin.csharp.model.ParameterDescriptor</class>
         <class>org.jqassistant.contrib.plugin.csharp.model.FieldDescriptor</class>
         <class>org.jqassistant.contrib.plugin.csharp.model.PrimitiveValueDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.csharp.model.UsesNamespaceDescriptor</class>
     </model>
     <scanner>
         <class>org.jqassistant.contrib.plugin.csharp.scanner.CSharpDirectoryScannerPlugin</class>

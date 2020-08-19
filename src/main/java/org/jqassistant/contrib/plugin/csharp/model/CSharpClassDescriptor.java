@@ -5,7 +5,4 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 @Label("Class")
 public interface CSharpClassDescriptor extends TypeDescriptor, AbstractDescriptor, AccessModifierDescriptor {
 
-    Boolean getSealed();
-
-    void setSealed(Boolean b);
 }

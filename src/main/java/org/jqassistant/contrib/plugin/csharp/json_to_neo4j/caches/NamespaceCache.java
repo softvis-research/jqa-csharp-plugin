@@ -1,25 +1,30 @@
 package org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.json_model.UsingModel;
 import org.jqassistant.contrib.plugin.csharp.model.NamespaceDescriptor;
 
-public class NamespaceCache extends DescriptorCache<NamespaceDescriptor, UsingModel> {
+import java.util.HashMap;
+
+public class NamespaceCache {
+
+    private final Store store;
+    private final HashMap<String, NamespaceDescriptor> cache;
 
     public NamespaceCache(Store store) {
-        super(store);
+        this.store = store;
+        this.cache = new HashMap<>();
     }
 
-    @Override
-    protected Class<NamespaceDescriptor> getDescriptorClass() {
-        return NamespaceDescriptor.class;
-    }
+    public NamespaceDescriptor findOrCreate(String key) {
 
-    @Override
-    protected void fillDescriptor(NamespaceDescriptor descriptor, UsingModel jsonModel) {
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        }
 
-        descriptor.setName(jsonModel.getName());
-        descriptor.setFullQualifiedName(jsonModel.getName());
-        descriptor.setAlias(jsonModel.getAlias());
+        NamespaceDescriptor descriptor = store.create(NamespaceDescriptor.class);
+        descriptor.setFullQualifiedName(key);
+        cache.put(key, descriptor);
+
+        return descriptor;
     }
 }

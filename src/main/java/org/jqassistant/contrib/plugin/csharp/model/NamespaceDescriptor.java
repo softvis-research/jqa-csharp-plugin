@@ -8,11 +8,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import java.util.List;
 
 @Label("Namespace")
-public interface NamespaceDescriptor extends CSharpDescriptor, NamedDescriptor, FullQualifiedNameDescriptor {
+public interface NamespaceDescriptor extends CSharpDescriptor, FullQualifiedNameDescriptor {
 
-    String getAlias();
-
-    void setAlias(String alias);
+    List<UsesNamespaceDescriptor> getUsedBy();
 
     @Relation("CONTAINS")
     List<TypeDescriptor> getContains();

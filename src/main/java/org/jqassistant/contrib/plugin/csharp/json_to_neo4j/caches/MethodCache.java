@@ -33,7 +33,7 @@ public class MethodCache {
         }
 
         MethodDescriptor descriptor = store.create(MethodDescriptor.class);
-        descriptor.setFqn(key);
+        descriptor.setFullQualifiedName(key);
         cache.put(key, descriptor);
 
         return descriptor;
