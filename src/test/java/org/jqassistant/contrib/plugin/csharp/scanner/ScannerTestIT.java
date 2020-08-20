@@ -3,6 +3,7 @@ package org.jqassistant.contrib.plugin.csharp.scanner;
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import org.jqassistant.contrib.plugin.csharp.model.CSharpClassDescriptor;
+import org.jqassistant.contrib.plugin.csharp.model.InterfaceTypeDescriptor;
 import org.jqassistant.contrib.plugin.csharp.model.NamespaceDescriptor;
 import org.jqassistant.contrib.plugin.csharp.model.UsesNamespaceDescriptor;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,8 @@ public class ScannerTestIT extends AbstractPluginIT {
         testNamespaces();
         testUsings();
         testClasses();
+        testBaseTypes();
+        testInterfaces();
 
         store.commitTransaction();
     }
@@ -65,6 +68,28 @@ public class ScannerTestIT extends AbstractPluginIT {
 
         assertThat(cSharpClassDescriptor.getFullQualifiedName()).isEqualTo("PublicUtils");
         assertThat(cSharpClassDescriptor.isAbstract()).isFalse();
+    }
+
+    private void testBaseTypes() {
+
+        List<CSharpClassDescriptor> cSharpClassDescriptorList = query("MATCH (c:Class {name: \"Rectangle\"}) RETURN c").getColumn("c");
+
+        assertThat(cSharpClassDescriptorList).hasSize(1);
+        CSharpClassDescriptor cSharpClassDescriptor = cSharpClassDescriptorList.get(0);
+
+        assertThat(cSharpClassDescriptor.getSuperClass()).isNotNull();
+        assertThat(cSharpClassDescriptor.getSuperClass().getName()).isEqualTo("Form");
+    }
+
+    private void testInterfaces() {
+
+        List<InterfaceTypeDescriptor> interfaceTypeDescriptorList = query("MATCH (i:Interface {name: \"ChildInterface\"}) RETURN i").getColumn("i");
+
+        assertThat(interfaceTypeDescriptorList).hasSize(1);
+        InterfaceTypeDescriptor interfaceTypeDescriptor = interfaceTypeDescriptorList.get(0);
+
+        assertThat(interfaceTypeDescriptor.getInterfaces()).hasSize(1);
+        assertThat(interfaceTypeDescriptor.getInterfaces().get(0).getName()).isEqualTo("ParentInterface");
     }
 
 }

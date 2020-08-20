@@ -1,6 +1,6 @@
 ﻿namespace Project_1.Interfaces
 {
-    private class InterfaceImplementation : Interface1
+    private class InterfaceImplementation : ChildInterface
     {
 
     }

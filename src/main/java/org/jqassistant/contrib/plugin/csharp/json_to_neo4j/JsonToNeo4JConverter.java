@@ -3,6 +3,7 @@ package org.jqassistant.contrib.plugin.csharp.json_to_neo4j;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.caches.*;
 import org.jqassistant.contrib.plugin.csharp.json_to_neo4j.json_model.*;
@@ -50,6 +51,8 @@ public class JsonToNeo4JConverter {
 
         createUsings();
         createTypes();
+        linkBaseTypes();
+        linkInterfaces();
         createEnumMembers();
         createConstructors();
         createMethods();
@@ -147,6 +150,54 @@ public class JsonToNeo4JConverter {
                 cSharpFileDescriptor.getTypes().add(interfaceTypeDescriptor);
 
                 findOrCreateNamespaceAndAddType(interfaceModel.getFqn(), interfaceTypeDescriptor);
+            }
+        }
+    }
+
+    private void linkInterfaces() {
+
+        for (FileModel fileModel : fileModelList) {
+            for (ClassModel classModel : fileModel.getClasses()) {
+
+                CSharpClassDescriptor cSharpClassDescriptor = (CSharpClassDescriptor) typeCache.get(classModel.getKey());
+
+                if (CollectionUtils.isNotEmpty(classModel.getImplementedInterfaces())) {
+
+                    for (String interfaceFqn : classModel.getImplementedInterfaces()) {
+
+                        TypeDescriptor typeDescriptor = typeCache.findOrCreateEmptyInterface(interfaceFqn);
+                        cSharpClassDescriptor.getInterfaces().add(typeDescriptor);
+                    }
+                }
+            }
+
+            for (InterfaceModel interfaceModel : fileModel.getInterfaces()) {
+
+                InterfaceTypeDescriptor interfaceTypeDescriptor = (InterfaceTypeDescriptor) typeCache.get(interfaceModel.getKey());
+
+                if (CollectionUtils.isNotEmpty(interfaceModel.getImplementedInterfaces())) {
+
+                    for (String interfaceFqn : interfaceModel.getImplementedInterfaces()) {
+
+                        TypeDescriptor typeDescriptor = typeCache.findOrCreateEmptyInterface(interfaceFqn);
+                        interfaceTypeDescriptor.getInterfaces().add(typeDescriptor);
+                    }
+                }
+            }
+        }
+    }
+
+    private void linkBaseTypes() {
+
+        for (FileModel fileModel : fileModelList) {
+            for (ClassModel classModel : fileModel.getClasses()) {
+
+                CSharpClassDescriptor cSharpClassDescriptor = (CSharpClassDescriptor) typeCache.get(classModel.getKey());
+
+                if (StringUtils.isNotBlank(classModel.getBaseType())) {
+                    TypeDescriptor typeDescriptor = typeCache.findOrCreateEmptyClass(classModel.getBaseType());
+                    cSharpClassDescriptor.setSuperClass(typeDescriptor);
+                }
             }
         }
     }

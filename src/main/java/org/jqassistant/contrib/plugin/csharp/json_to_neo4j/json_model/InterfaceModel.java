@@ -19,6 +19,8 @@ public class InterfaceModel implements JsonModel {
 
     private List<MethodModel> methods;
 
+    private List<String> implementedInterfaces;
+
     @Override
     public String getKey() {
         return fqn;

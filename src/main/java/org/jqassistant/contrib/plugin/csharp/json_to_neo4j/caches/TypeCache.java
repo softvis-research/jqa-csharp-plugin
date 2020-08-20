@@ -35,6 +35,33 @@ public class TypeCache {
         return descriptor;
     }
 
+
+    public CSharpClassDescriptor findOrCreateEmptyClass(String fqn) {
+
+        if (cache.containsKey(fqn)) {
+            return (CSharpClassDescriptor) cache.get(fqn);
+        }
+
+        CSharpClassDescriptor descriptor = store.create(CSharpClassDescriptor.class);
+        descriptor.setFullQualifiedName(fqn);
+        cache.put(fqn, descriptor);
+
+        return descriptor;
+    }
+
+    public InterfaceTypeDescriptor findOrCreateEmptyInterface(String fqn) {
+
+        if (cache.containsKey(fqn)) {
+            return (InterfaceTypeDescriptor) cache.get(fqn);
+        }
+
+        InterfaceTypeDescriptor descriptor = store.create(InterfaceTypeDescriptor.class);
+        descriptor.setFullQualifiedName(fqn);
+        cache.put(fqn, descriptor);
+
+        return descriptor;
+    }
+
     public CSharpClassDescriptor find(ClassModel classModel) {
         return (CSharpClassDescriptor) cache.get(classModel.getKey());
     }
