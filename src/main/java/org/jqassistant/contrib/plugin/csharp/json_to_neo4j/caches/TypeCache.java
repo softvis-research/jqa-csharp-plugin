@@ -82,6 +82,7 @@ public class TypeCache {
         descriptor.setAbstract(classModel.isAbstractKeyword());
         descriptor.setSealed(classModel.isSealed());
         descriptor.setMd5(classModel.getMd5());
+        descriptor.setStatic(classModel.isStaticKeyword());
     }
 
     public EnumTypeDescriptor create(EnumModel enumModel) {

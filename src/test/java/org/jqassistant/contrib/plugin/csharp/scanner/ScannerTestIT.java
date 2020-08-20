@@ -60,14 +60,41 @@ public class ScannerTestIT extends AbstractPluginIT {
 
     private void testClasses() {
 
-        List<CSharpClassDescriptor> cSharpClassDescriptorList = query("MATCH (c:Class {name: \"PublicUtils\"}) RETURN c").getColumn("c");
+        testSimpleClass();
+        testAbstractClass();
+        testStaticClass();
+    }
 
+    private void testSimpleClass() {
+
+        testClass("PublicUtils", false, false);
+    }
+
+    private void testAbstractClass() {
+        testClass("AbstractUtils", false, true);
+    }
+
+    private void testStaticClass() {
+        testClass("StaticUtils", true, false);
+    }
+
+    private void testClass(String className, boolean expectStatic, boolean expectAbstract) {
+
+        List<CSharpClassDescriptor> cSharpClassDescriptorList = query("MATCH (c:Class {name: \"" + className + "\"}) RETURN c").getColumn("c");
         assertThat(cSharpClassDescriptorList).hasSize(1);
-
         CSharpClassDescriptor cSharpClassDescriptor = cSharpClassDescriptorList.get(0);
 
-        assertThat(cSharpClassDescriptor.getFullQualifiedName()).isEqualTo("PublicUtils");
-        assertThat(cSharpClassDescriptor.isAbstract()).isFalse();
+        if (expectAbstract) {
+            assertThat(cSharpClassDescriptor.isAbstract()).isTrue();
+        } else {
+            assertThat(cSharpClassDescriptor.isAbstract()).isFalse();
+        }
+
+        if (expectStatic) {
+            assertThat(cSharpClassDescriptor.isStatic()).isTrue();
+        } else {
+            assertThat(cSharpClassDescriptor.isStatic()).isFalse();
+        }
     }
 
     private void testBaseTypes() {

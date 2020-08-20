@@ -21,6 +21,9 @@ public class ClassModel implements JsonModel {
 
     private boolean sealed;
 
+    @JsonProperty("static")
+    private boolean staticKeyword;
+
     private String accessibility;
 
     private String baseType;
