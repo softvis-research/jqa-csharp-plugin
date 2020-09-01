@@ -35,29 +35,44 @@ public class CSharpToJsonToolExecutor {
             LOGGER.info("Creating output folder in '{}'.", jsonOutputPath);
             Files.createDirectories(jsonOutputPath);
 
+            if (IS_OS_LINUX) {
+                makeToolExecutableOnLinux();
+            }
+
             String[] command = new String[5];
             command[0] = toolPath + File.separator + getCommandForCurrentPlatform();
             command[1] = "-i";
             command[2] = sourceDirectory.getAbsolutePath();
             command[3] = "-o";
             command[4] = jsonOutputPath.toAbsolutePath().toString();
+            execute(command);
 
-            LOGGER.info("Executing command: {} {} {} {} {}.", command[0], command[1], command[2], command[3], command[4]);
-            Process process = Runtime.getRuntime().exec(command);
-
-            ExecutionStreamLogger outputLogger = new ExecutionStreamLogger(process.getInputStream(), "OUTPUT");
-            ExecutionStreamLogger errorLogger = new ExecutionStreamLogger(process.getErrorStream(), "ERROR");
-
-            outputLogger.start();
-            errorLogger.start();
-
-            int exitCode = process.waitFor();
-            LOGGER.info("{} finished with exit code {}.", NAME, exitCode);
             return jsonOutputPath.toFile();
 
         } catch (IOException | InterruptedException e) {
             throw new CSharpPluginException(String.format("Failed to run %s.", NAME), e);
         }
+    }
+
+    private void makeToolExecutableOnLinux() throws IOException, InterruptedException {
+
+        String command = "chmod +x " + toolPath + File.separator + getCommandForCurrentPlatform();
+        execute(new String[]{command});
+    }
+
+    private void execute(String[] command) throws IOException, InterruptedException {
+
+        LOGGER.info("Executing command: {}.", command);
+        Process process = Runtime.getRuntime().exec(command);
+
+        ExecutionStreamLogger outputLogger = new ExecutionStreamLogger(process.getInputStream(), "OUTPUT");
+        ExecutionStreamLogger errorLogger = new ExecutionStreamLogger(process.getErrorStream(), "ERROR");
+
+        outputLogger.start();
+        errorLogger.start();
+
+        int exitCode = process.waitFor();
+        LOGGER.info("{} finished with exit code {}.", NAME, exitCode);
     }
 
     private String getCommandForCurrentPlatform() {
