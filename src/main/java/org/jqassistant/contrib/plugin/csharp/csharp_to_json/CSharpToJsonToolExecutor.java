@@ -56,13 +56,16 @@ public class CSharpToJsonToolExecutor {
 
     private void makeToolExecutableOnLinux() throws IOException, InterruptedException {
 
-        String command = "chmod +x " + toolPath + File.separator + getCommandForCurrentPlatform();
-        execute(new String[]{command});
+        String[] command = new String[3];
+        command[0] = "chmod";
+        command[1] = "+x";
+        command[2] = toolPath + File.separator + getCommandForCurrentPlatform();
+        execute(command);
     }
 
     private void execute(String[] command) throws IOException, InterruptedException {
 
-        LOGGER.info("Executing command: {}.", command);
+        LOGGER.info("Executing command: {}.", String.join(" ", command));
         Process process = Runtime.getRuntime().exec(command);
 
         ExecutionStreamLogger outputLogger = new ExecutionStreamLogger(process.getInputStream(), "OUTPUT");
