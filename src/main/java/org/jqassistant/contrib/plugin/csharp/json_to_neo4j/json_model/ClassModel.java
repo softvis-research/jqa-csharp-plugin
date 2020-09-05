@@ -38,6 +38,12 @@ public class ClassModel implements JsonModel {
 
     private List<FieldModel> fields;
 
+    private int firstLineNumber;
+
+    private int lastLineNumber;
+
+    private int effectiveLineCount;
+
     public String getKey() {
         return fqn;
     }

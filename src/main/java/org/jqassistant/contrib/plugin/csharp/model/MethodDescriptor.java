@@ -45,7 +45,7 @@ public interface MethodDescriptor extends MemberDescriptor, AbstractDescriptor {
 
     void setLastLineNumber(Integer lastLineNumber);
 
-    int getEffectiveLineCount();
+    Integer getEffectiveLineCount();
 
-    void setEffectiveLineCount(int effectiveLineCount);
+    void setEffectiveLineCount(Integer effectiveLineCount);
 }

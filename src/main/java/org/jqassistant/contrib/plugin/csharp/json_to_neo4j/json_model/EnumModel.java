@@ -18,6 +18,12 @@ public class EnumModel implements JsonModel {
 
     private List<EnumMemberModel> members;
 
+    private int firstLineNumber;
+
+    private int lastLineNumber;
+
+    private int effectiveLineCount;
+
     @Override
     public String getKey() {
         return fqn;

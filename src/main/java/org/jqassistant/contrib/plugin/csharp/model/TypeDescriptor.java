@@ -15,4 +15,16 @@ public interface TypeDescriptor extends CSharpDescriptor, NamedDescriptor, FullQ
     @Relation.Outgoing
     @Declares
     List<MemberDescriptor> getDeclaredMembers();
+
+    Integer getFirstLineNumber();
+
+    void setFirstLineNumber(Integer firstLineNumber);
+
+    Integer getLastLineNumber();
+
+    void setLastLineNumber(Integer lastLineNumber);
+
+    Integer getEffectiveLineCount();
+
+    void setEffectiveLineCount(Integer effectiveLineCount);
 }

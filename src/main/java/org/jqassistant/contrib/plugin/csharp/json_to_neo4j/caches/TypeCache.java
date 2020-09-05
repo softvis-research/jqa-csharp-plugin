@@ -83,6 +83,10 @@ public class TypeCache {
         descriptor.setSealed(classModel.isSealed());
         descriptor.setMd5(classModel.getMd5());
         descriptor.setStatic(classModel.isStaticKeyword());
+
+        descriptor.setFirstLineNumber(classModel.getFirstLineNumber());
+        descriptor.setLastLineNumber(classModel.getLastLineNumber());
+        descriptor.setEffectiveLineCount(classModel.getEffectiveLineCount());
     }
 
     public EnumTypeDescriptor create(EnumModel enumModel) {
@@ -98,6 +102,10 @@ public class TypeCache {
         descriptor.setName(enumModel.getName());
         descriptor.setFullQualifiedName(enumModel.getFqn());
         descriptor.setMd5(enumModel.getMd5());
+
+        descriptor.setFirstLineNumber(enumModel.getFirstLineNumber());
+        descriptor.setLastLineNumber(enumModel.getLastLineNumber());
+        descriptor.setEffectiveLineCount(enumModel.getEffectiveLineCount());
     }
 
     public InterfaceTypeDescriptor create(InterfaceModel interfaceModel) {
@@ -114,6 +122,10 @@ public class TypeCache {
         descriptor.setFullQualifiedName(interfaceModel.getFqn());
         descriptor.setVisibility(interfaceModel.getAccessibility());
         descriptor.setMd5(interfaceModel.getMd5());
+
+        descriptor.setFirstLineNumber(interfaceModel.getFirstLineNumber());
+        descriptor.setLastLineNumber(interfaceModel.getLastLineNumber());
+        descriptor.setEffectiveLineCount(interfaceModel.getEffectiveLineCount());
     }
 
     public TypeDescriptor get(String key) {

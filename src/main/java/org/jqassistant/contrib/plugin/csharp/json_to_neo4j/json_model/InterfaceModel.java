@@ -21,6 +21,12 @@ public class InterfaceModel implements JsonModel {
 
     private List<String> implementedInterfaces;
 
+    private int firstLineNumber;
+
+    private int lastLineNumber;
+
+    private int effectiveLineCount;
+
     @Override
     public String getKey() {
         return fqn;
