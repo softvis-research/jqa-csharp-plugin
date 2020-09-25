@@ -13,11 +13,11 @@ public class CSharpToJsonToolFolders {
 
     public String buildToolPath() {
 
-        return appDirs.getUserDataDir("csharp-to-json-converter", "0.1.0", "jqassistant-contrib");
+        return appDirs.getUserDataDir("csharp-to-json-converter", "0.1.2", "jqassistant-contrib");
     }
 
     public String buildPluginDataPath() {
 
-        return appDirs.getUserDataDir("csharp-jqassistant-plugin", "0.1.0", "jqassistant-contrib");
+        return appDirs.getUserDataDir("csharp-jqassistant-plugin", "0.1.2", "jqassistant-contrib");
     }
 }

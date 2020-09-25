@@ -8,10 +8,13 @@ import org.jqassistant.contrib.plugin.csharp.model.CSharpClassDescriptor;
 import org.jqassistant.contrib.plugin.csharp.model.EnumTypeDescriptor;
 import org.jqassistant.contrib.plugin.csharp.model.InterfaceTypeDescriptor;
 import org.jqassistant.contrib.plugin.csharp.model.TypeDescriptor;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
 public class TypeCache {
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TypeCache.class);
 
     private final Store store;
     private final HashMap<String, TypeDescriptor> cache;
@@ -52,7 +55,15 @@ public class TypeCache {
     public InterfaceTypeDescriptor findOrCreateEmptyInterface(String fqn) {
 
         if (cache.containsKey(fqn)) {
-            return (InterfaceTypeDescriptor) cache.get(fqn);
+
+            try {
+                return (InterfaceTypeDescriptor) cache.get(fqn);
+
+            } catch (Exception e) {
+                LOGGER.error("Failed to cast interface in cache: " + fqn, e);
+                LOGGER.info("Deleting existing type '{}' to be able to go on ...", fqn);
+                cache.remove(fqn);
+            }
         }
 
         InterfaceTypeDescriptor descriptor = store.create(InterfaceTypeDescriptor.class);

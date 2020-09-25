@@ -11,7 +11,7 @@
 
     <groupId>org.jqassistant.contrib.plugin</groupId>
     <artifactId>jqa-csharp-plugin</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 
     <name>jQAssistant CSharp Plugin</name>
     <description>The jQAssistant plugin to scan and to analyze a CSharp instance.</description>
